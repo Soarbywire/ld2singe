@@ -33,10 +33,19 @@ Version 1.0. Tested on one game so far: the *Hologram Time Traveler* Singe 2 por
 
 The game must already work in Hypseus Singe with its original video before you start.
 
-## One-time setup (Windows)
+## Download
+
+**Windows, easiest:** from the [Releases page](https://github.com/Soarbywire/ld2singe/releases), download
+`ld2singe-1.0-windows.zip` and unzip it into a folder of its own. It contains `ld2singe.exe`, so you don't
+need Python. You still need **ffmpeg** (setup step 2 below), or put `ffmpeg.exe` and `ffprobe.exe` in the
+same folder as `ld2singe.exe`. Then use `ld2singe.exe` wherever this guide says `py ld2singe.py`.
+
+**Any system (Windows, Linux, macOS):** download `ld2singe.py` and follow the setup below.
+
+## One-time setup (Windows, if you use the Python script)
 
 1. Install Python from <https://www.python.org/downloads/>. Tick **"Add python.exe to PATH"** in the installer.
-2. Install ffmpeg. In a Command Prompt or PowerShell window:
+2. Install ffmpeg (needed by the .exe too). In a Command Prompt or PowerShell window:
    ```
    winget install Gyan.FFmpeg
    ```
@@ -193,7 +202,8 @@ paths at the top of each first.
 |---|---|
 | `python was not found` | Use `py` instead of `python` on Windows |
 | `can't open file ld2singe.py` | `cd` into the folder that contains `ld2singe.py` first |
-| `ffmpeg` not found | Open a new window after installing ffmpeg, or pass `--ffmpeg "C:\path\to\ffmpeg.exe"` |
+| `ffmpeg` not found | Open a new window after installing ffmpeg, put `ffmpeg.exe` and `ffprobe.exe` next to `ld2singe`, or pass `--ffmpeg "C:\path\to\ffmpeg.exe"` |
+| Windows SmartScreen warns about `ld2singe.exe` | It isn't code-signed. Click "More info", then "Run anyway", or use the Python script instead |
 | The game says a script isn't found after installing | The new folder's name must match the original exactly, including capital letters |
 | `check: ... DIFFERENT` at the end of the build | The new video is the wrong length. Please open an issue with the log |
 | Picture in the wrong place or wrong size | Try `--framing disc`, or check the "precise framing" lines in the log |

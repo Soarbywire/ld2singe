@@ -1,0 +1,56 @@
+name: Build Windows exe
+
+# Builds ld2singe.exe on Windows and attaches ld2singe-<version>-windows.zip to the release.
+# Runs automatically when a release is published; can also be run by hand from the Actions tab.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to attach the zip to (e.g. v1.0)"
+        required: true
+        default: "v1.0"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build tools
+        run: python -m pip install numpy pillow pyinstaller
+
+      - name: Build ld2singe.exe
+        run: pyinstaller --onefile --console --name ld2singe ld2singe.py
+
+      - name: Test the exe
+        run: dist\ld2singe.exe --version
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $tag = "${{ github.event.release.tag_name || inputs.tag }}"
+          $name = "ld2singe-$($tag.TrimStart('v'))-windows"
+          New-Item -ItemType Directory $name | Out-Null
+          Copy-Item dist\ld2singe.exe, 1_match_and_check.bat, 2_build.bat, README.md, LICENSE, CHANGELOG.md $name
+          Compress-Archive -Path $name -DestinationPath "$name.zip"
+          "ZIP=$name.zip" | Out-File -Append $env:GITHUB_ENV
+          "TAG=$tag" | Out-File -Append $env:GITHUB_ENV
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ld2singe-windows
+          path: ${{ env.ZIP }}
+
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ env.TAG }}" "${{ env.ZIP }}" --clobber --repo "${{ github.repository }}"

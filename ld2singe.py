@@ -39,10 +39,22 @@ def log(*a):
 # ============================================================== ffmpeg helpers
 class Tools:
     def __init__(self, ffmpeg):
+        if not ffmpeg:                               # an ffmpeg next to ld2singe(.exe) wins over the PATH
+            here = os.path.dirname(os.path.abspath(sys.executable if getattr(sys, "frozen", False) else __file__))
+            for name in ("ffmpeg.exe", "ffmpeg"):
+                if os.path.isfile(os.path.join(here, name)):
+                    ffmpeg = os.path.join(here, name)
+                    break
         self.ffmpeg = ffmpeg or "ffmpeg"
         d = os.path.dirname(self.ffmpeg)
         exe = ".exe" if self.ffmpeg.lower().endswith(".exe") else ""
         self.ffprobe = os.path.join(d, "ffprobe" + exe) if d else "ffprobe"
+        for prog in (self.ffmpeg, self.ffprobe):
+            try:
+                subprocess.run([prog, "-version"], capture_output=True)
+            except OSError:
+                sys.exit(f"Can't run {prog}. Install ffmpeg (Windows: winget install Gyan.FFmpeg, then open a new "
+                         "window), put ffmpeg.exe and ffprobe.exe next to ld2singe, or use --ffmpeg PATH.")
 
     def probe(self, path):
         r = subprocess.run([self.ffprobe, "-v", "error", "-select_streams", "v:0",

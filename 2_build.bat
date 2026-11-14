@@ -5,7 +5,11 @@ set "LD=C:\mame\timetrv.avi"
 set "GAME=C:\Hypseus Singe\singe\Hologram"
 set "OUT=C:\mame\ld2singe_work"
 
-py "%~dp0ld2singe.py" --ld "%LD%" --game "%GAME%" --out "%OUT%"
+if exist "%~dp0ld2singe.exe" (
+    "%~dp0ld2singe.exe" --ld "%LD%" --game "%GAME%" --out "%OUT%"
+) else (
+    py "%~dp0ld2singe.py" --ld "%LD%" --game "%GAME%" --out "%OUT%"
+)
 echo.
 echo Done. The new game folder is "%OUT%\game". See README.md, step 5, for how to install it.
 pause
