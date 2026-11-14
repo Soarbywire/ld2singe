@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+ld2singe_work/
+*.avi
+*.chd
+*.m2v
+*.ogg
+*.npz
